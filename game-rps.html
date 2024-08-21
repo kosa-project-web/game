@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game World : 가위바위보!</title>
+    <meta name="description" content="Vanilla JS를 이용한 Mini Game Project - 가위바위보">
+    <link rel="icon" type="image/x-ico" href="./resources/favicon/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/common/styles.css">
+    <link rel="stylesheet" href="./css/game-rps.css">
+</head>
+<body>
+<div id="container" class="no-drag">
+    <div class="board">
+        <header class="menu">
+            <nav class="menu__nav">
+                <div class="menu__nav-life">
+                    <strong id="player-life" aria="기회"></strong>
+                </div>
+                <div class="menu__nav-stop">
+                    <div class="menu__nav-stop--button" id="stop-button">
+                        <span class="sr-only">게임 종료</span>
+                    </div>
+                </div>
+                <div class="menu__nav-home">
+                    <a href="./index.html#rock-paper-scissors" class="menu__nav-home--button" id="home-button">
+                        <span class="sr-only">메인 페이지로 이동</span>
+                    </a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="game">
+            <div class="game__board">
+                <div class="game__score">
+                    <p class="game__score-item pc">
+                        PC : <strong id="score-pc"></strong>
+                    </p>
+                    <span>
+                            VS
+                        </span>
+                    <p class="game__score-item player">
+                        Player : <strong id="score-player"></strong>
+                    </p>
+                </div>
+
+                <div class="game__pc-selection">
+                    <img src="./img/game-rps/scissors.png" alt="컴퓨터 선택: 가위" class="game__pc-selection--image"
+                         id="pc-image"/>
+                </div>
+
+                <div class="game__button-wrapper">
+                    <button type="button" class="white-button" id="scissors-button">
+                        가위
+                    </button>
+                    <button type="button" class="white-button" id="rock-button">
+                        바위
+                    </button>
+                    <button type="button" class="white-button" id="paper-button">
+                        보
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal modal-layer">
+        <div class="modal__content">
+            <div class="modal__content-title">
+            </div>
+
+            <p class="modal__content-guide">
+                <span id="time-remain"></span>초 뒤 자동으로 닫힙니다.
+            </p>
+
+            <button class="white-button modal__content-close-button" type="button">
+                닫기
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="./js/game-rps.js"></script>
+</body>
+</html>
