@@ -98,11 +98,11 @@ function createAnswer() {
 // PC가 정답 선택
 const items = document.getElementsByClassName("item");
 
-function selectAnswerOnPC() {
-    let cnt = 0;
+        function selectAnswerOnPC() {
+            let cnt = 0;
 
-    let selectAnswerPromise = new Promise((resolve, reject) => {
-        let selectAnswerTimer = setInterval(() => {
+            let selectAnswerPromise = new Promise((resolve, reject) => {
+                let selectAnswerTimer = setInterval(() => {
             // 배경색이 변하는 애니메이션 재시작을 위해 이미 bgChange 클래스가 부착되어 있다면 제거
             if (items[answerArr[cnt]].classList.contains("bgChange")) {
                 items[answerArr[cnt]].classList.remove("bgChange");
@@ -193,13 +193,20 @@ function clearStage() {
     }, 2000);
 }
 
-// 게임 종료 시 출력 문구
 const modal = document.getElementsByClassName("modal")[0];
+const modalTitle = document.querySelector(".modal__content-title");
+const nicknameInput = document.getElementById("nickname");
+const resultModal = document.getElementById("result-modal");
+const rankingModal = document.getElementById("ranking-modal");
+const modalRanking = document.querySelector(".modal__ranking");
+const closeRankingButton = document.getElementById("close-ranking-button");
 
+// 게임 종료 시 출력 문구
 function showGameResult() {
+
     let resultText = "";
 
-    if (point <= 20) {
+   /* if (point <= 20) {
         resultText = "한 눈 팔면 안돼요!";
     } else if (point > 20 && point <= 40) {
         resultText = "집중력을 좀 더 높여볼까요?<br/>ฅʕ•ㅅ•ʔฅ<br/><br/>곰돌이가 당신을 응원합니다.";
@@ -213,7 +220,7 @@ function showGameResult() {
         resultText = "ㄴ(°0°)ㄱ<br/>상상도 못한 정체<br/><br/>엄청난 기억력을<br/>가지셨네요!";
     } else if (point > 170) {
         resultText = "(๑°ㅁ°๑)ﾉ<br/>어쩌면 당신의 지능,<br/>컴퓨터보다 좋을지도..";
-    }
+    }*/
 
     modalTitle.innerHTML = `
     <h1 class="modal__content-title--result color-red">
@@ -227,10 +234,79 @@ function showGameResult() {
     </p>
     `;
 
-    modal.classList.add("show");
+
+    // 기존 닫기 버튼 대신 닉네임 입력 폼을 보여줌
+    nicknameInput.value = "";
+    resultModal.classList.add("show");
+
+    // modal.classList.add("show");
+
 }
 
-// 모달창 닫으면 게임 재시작
+// 엔터 키를 눌렀을 때 점수 저장 및 랭킹 표시
+nicknameInput.addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        const nickname = nicknameInput.value.trim();
+
+        // if (nickname === "") {
+        //     alert("Please enter your nickname.");
+        //     return;
+        // }
+
+        // 점수 저장
+        saveScore(nickname, point);
+
+        // 결과 모달 닫고 랭킹 모달 열기
+        resultModal.classList.remove("show");
+        // 랭킹 표시
+        showRanking();
+        rankingModal.classList.add("show");
+
+        /*// 모달 창 닫기 (랭킹 보여준 후 3초 뒤에 게임 재시작)
+        setTimeout(() => {
+            modal.classList.remove("show");
+            restartGame();
+        }, 3000);*/
+
+        //재시작 버튼
+    }
+});
+
+// 점수 저장 함수
+function saveScore(nickname, score) {
+    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    scores.push({ nickname: nickname, score: score });
+
+    // 점수를 높은 순으로 정렬
+    scores.sort((a, b) => b.score - a.score);
+
+    // 상위 10개의 점수만 저장
+    if (scores.length > 10) {
+        scores = scores.slice(0, 10);
+    }
+
+    localStorage.setItem("scores", JSON.stringify(scores));
+}
+
+// 랭킹 표시 함수
+function showRanking() {
+    const scores = JSON.parse(localStorage.getItem("scores")) || [];
+
+    modalRanking.innerHTML = `
+        <ol>
+            ${scores.map(score => `<li>${score.nickname}: ${score.score}</li>`).join('')}
+        </ol>
+    `;
+}
+
+// 랭킹 모달 닫기 버튼 클릭 시 게임 재시작
+closeRankingButton.addEventListener("click", function() {
+    rankingModal.classList.remove("show");
+    restartGame();
+});
+
+/*// 모달창 닫으면 게임 재시작
 const modalTitle = document.getElementsByClassName("modal__content-title")[0];
 const modalCloseButton = document.getElementsByClassName("modal__content-close-button")[0];
 
@@ -239,7 +315,7 @@ modal.addEventListener('click', function(e) {
         modal.classList.remove("show");
         restartGame();
     }
-});
+});*/
 
 // isClick이 ture인 경우에만 CSS hover와 비슷한 효과를 주기 위해 JS로 구현
 // 아이템 요소에 마우스 over 시
