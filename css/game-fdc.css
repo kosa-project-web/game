@@ -236,6 +236,26 @@
         }
     }
 }
+/*랭킹*/
+.modal__content-initials {
+    display: none; /* 처음에는 숨김 */
+    margin-top: 20px;
+    text-align: center;
+}
+
+#initials {
+    font-size: 20px;
+    text-transform: uppercase;
+    padding: 5px;
+    width: 80px;
+    margin-right: 10px;
+}
+
+#submit-initials {
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
 
 /* Desktop */
 @media screen and (min-width: 1024px) {
@@ -248,3 +268,4 @@
         width: 20%;
     }
 }
+
