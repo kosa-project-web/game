@@ -23,6 +23,7 @@
                         <span class="sr-only">게임 규칙</span>
                     </div>
                 </div>
+
                 <div class="menu__nav-restart">
                     <div class="menu__nav-restart--button" id="restart-button">
                         <span class="sr-only">게임 재시작</span>
@@ -155,13 +156,60 @@
             <div class="modal__content-title" id="alert-modal-title">
             </div>
 
+
+
             <button class="white-button modal__content-close-button" id="alert-modal-close-button" type="button">
                 닫기
             </button>
         </div>
     </div>
 
+
+<!--//kny 커스텀 이걸로 바꿀거야.-->
+    <div class="modal modal-layer info-modal" id="result-modal">
+        <div class="modal__content">
+            <div class="modal__content-title">
+                <h1 class="color-blue">점수 확인!</h1>
+            </div>
+
+            <div class="modal__content-desc">
+                <ul class="modal__content-desc--list">
+                    <li class="test">
+                        점수: <span id="final-score"></span>점
+                    <li>
+                    <input type="text" id="player-name" placeholder="닉네임 입력" />
+                    </li>
+                    <li>
+                        <button class="white-button form__button" onclick="saveScore()">저장</button>
+                    </li>
+
+                </ul>
+            </div>
+
+            <button class="white-button modal__content-close-button" id="result-modal-close-button" type="button">
+                닫기
+            </button>
+        </div>
+    </div>
+
+    <div class="modal modal-layer info-modal" id="ranking-modal">
+        <div class="modal__content">
+            <div class="modal__content-title">
+                <h1 class="color-blue">랭킹 확인!</h1>
+            </div>
+
+            <div class="modal__content-desc">
+                <ul class="modal__content-desc--list">
+                    <h2>랭킹</h2>
+                    <div id="ranking-list"></div>
+                    <button class="white-button form__button" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.remove('show')">닫기</button>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div class="game-result"></div>
+
 </div>
 
 <script src="./js/game-bac.js"></script>

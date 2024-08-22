@@ -20,6 +20,7 @@ function stopGame(isWin) {
 }
 
 function restartGame() {
+    clearModals();
     initGame();
     initScreen();
     startGame();
@@ -304,6 +305,12 @@ infoModal.addEventListener("click", function(e) {
     }
 });
 
+//커스텀 KNY
+//랭킹 등록 모달창 열기
+
+
+
+
 // 경고 모달창 출력
 const alertModalTitle = document.getElementById("alert-modal-title");
 
@@ -330,21 +337,46 @@ alertModal.addEventListener("click", function(e) {
 // 게임 종료 시 결과 출력
 const gameResultImg = document.getElementsByClassName("game-result")[0];
 
+//결과 모달창 닫기
+const resultmodalclosebtn = document.getElementById("result-modal-close-button");
+resultmodalclosebtn.addEventListener("click", function(e) {
+    document.getElementById("result-modal").classList.remove("show");
+});
+
+//커스텀 KNY
+//모달 계층 2번째에 창 추가 모달계층 첫번째는 인포메이션 창이다.
+const modal = document.getElementsByClassName("modal")[1];
+const modalTitle = document.getElementsByClassName("modal__content-title")[1];
+
+
 function showGameResult(isWin) {
-    if (isWin === true) {
+    playerScore = 100 - 10 * (round - 1); // 게임 점수 계산
+
+    // Win 이미지 모달 활성화
+    if (isWin) {
         gameResultImg.style.backgroundImage = `url('img/common/win.png')`;
+        gameResultImg.classList.add("show");
+
+        // 2초 후 Win 이미지 모달 제거 및 점수 모달 활성화
+        setTimeout(() => {
+            gameResultImg.classList.remove("show");
+
+            document.getElementById('final-score').textContent = playerScore.toString();
+            document.getElementById("result-modal").classList.add("show");
+            //document.getElementById('game-result-modal').classList.add('show');
+        }, 2000);
     } else {
         gameResultImg.style.backgroundImage = `url('img/common/lose.png')`;
+        gameResultImg.classList.add("show");
+
+        // 패배 이미지는 2초 후 사라짐
+        setTimeout(() => {
+            gameResultImg.classList.remove("show");
+        }, 2000);
     }
-
-    gameResultImg.classList.add("show");
-
-    // 2초 후 결과 출력 애니메이션 제거 및 재시작 버튼 깜빡이도록 설정
-    setTimeout(() => {
-        gameResultImg.classList.remove("show");
-        restartButton.classList.add("blink");
-    }, 2000);
 }
+
+
 
 // 엔터키 클릭으로 모달창 닫기
 document.addEventListener("keydown", function(e) {
@@ -359,8 +391,91 @@ document.addEventListener("keydown", function(e) {
             alertModal.classList.remove("show");
         }
     }
+
+    //커스텀 KNY
+    if(modal.classList.contains("show")){
+        if (e.code === "Enter") {
+            modal.classList.remove("show");
+        }
+    }
 });
 
 window.onload = function() {
     startGame();
 };
+
+
+//커스텀 KNY
+function registerNameScore( _name) {
+    playerScore = 100 - 10*(round-1);
+    localStorage.setItem("nameScore", playerScore);
+
+}
+
+//로컬 스토리지는 각 페이지마다 + 각 브라우저 마다 따로 관리되는 자료구조 키 밸류
+function startLocalStorage(storageName, isClear){
+    if(isClear){
+        localStorage.removeItem(storageName);
+        console.log("해당 아이템 지웠어요.")
+        return;
+    }
+    else{
+        if(!localStorage.getItem(storageName)) {
+            console.log("해당 이름은 있네요");
+        }else{
+            console.log("해당 이름이 없으므로 값을 생성합니다.");
+            registerNameScore(storageName);
+        }
+    }
+}
+
+//커스텀 GPT센세
+function saveScore() {
+    let playerName = document.getElementById('player-name').value;
+    let score = document.getElementById('final-score').textContent;
+
+    if (!playerName) {
+        alert("닉네임을 입력해주세요.");
+        return;
+    }
+
+    let scores = JSON.parse(localStorage.getItem('scores')) || [];
+    scores.push({ name: playerName, score: parseInt(score) });
+    scores.sort((a, b) => b.score - a.score);
+
+    if (scores.length > 10) {
+        scores.length = 10; // 상위 10개만 저장
+    }
+
+    localStorage.setItem('scores', JSON.stringify(scores));
+
+    // 점수 모달 창 닫기
+    document.getElementById('result-modal').classList.remove('show');
+
+    // 랭킹 모달 창 표시
+    showRankings();
+}
+
+function showRankings() {
+    let scores = JSON.parse(localStorage.getItem('scores')) || [];
+    let modalContent = '<ul>';
+    scores.forEach((entry, index) => {
+        modalContent += `<li>${index + 1}. ${entry.name} - ${entry.score}점</li>`;
+    });
+    modalContent += '</ul>';
+    document.getElementById('ranking-list').innerHTML = modalContent;
+    document.getElementById('ranking-modal').classList.add('show');
+}
+
+function clearModals() {
+    // 모든 모달 창을 숨깁니다.
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.remove('show');
+    });
+}
+
+console.log("만약 스토리지 청소 하고 싶으면 clearStorage() 호출하세요.");
+//kny custom
+function clearStorage(){
+    localStorage.clear();
+}
