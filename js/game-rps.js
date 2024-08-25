@@ -61,9 +61,7 @@ const scissorsButton = document.getElementById("scissors-button");
 const rockButton = document.getElementById("rock-button");
 const papersButton = document.getElementById("paper-button");
 
-let closeTimerState = 0;
-
-buttonWrapper.addEventListener("click", function (e) {
+buttonWrapper.addEventListener("click", function(e) {
     let playerSelection = "";
 
     // 사용자가 선택한 버튼에 따라 사용자 선택 값 설정
@@ -96,11 +94,10 @@ function rockPaperSissors(playerSelection) {
 
     // 기회가 없으면 게임 종료
     if (playerLife === 0) {
-        initGame();
+        showGameResult();
+    } else {
+        restartGameAfterExitModal();  // 라운드 종료 후 5초 타이머 실행
     }
-
-    // 모달 종료 시 게임 재시작
-    restartGameAfterExitModal();
 }
 
 // 대진 결과를 판단하는 함수 (가위 : 0, 바위 : 1, 보 : 2)
@@ -144,7 +141,7 @@ function showMatchResult(result, player, pc) {
     if (playerLife > 0) {
         showRoundResult(result, player, pc);
     } else {
-        showGameResult();
+        showGameResult();  // 게임 종료 시 결과 표시
     }
 }
 
@@ -177,8 +174,7 @@ function showRoundResult(result, player, pc) {
 
 // 게임 종료 시 출력 문구
 function showGameResult() {
-    time = 10;
-
+    // 10초 타이머 제거
     modalTitle.innerHTML = `
     <h1 class="modal__content-title--result color-red">
         게임 종료!
@@ -193,9 +189,34 @@ function showGameResult() {
         <span class="color-green">${drawCount}번</span>의 무승부가<br />
         있었습니다.
     </p>
+    <div>
+        <label for="nickname">닉네임:</label>
+        <input type="text" id="nickname" name="nickname" required>
+        <button id="save-score">점수 저장</button>
+    </div>
+    <p id="ranking-message" class="color-blue" style="display:none; margin-top: 10px;">랭킹이 등록되었습니다.</p>
     `;
 
     modal.classList.add("show");
+
+    const saveScoreButton = document.getElementById("save-score");
+    saveScoreButton.addEventListener("click", function() {
+        const nickname = document.getElementById("nickname").value;
+        const rankingMessage = document.getElementById("ranking-message");
+        if (nickname) {
+            saveScore(nickname, playerScore);
+            rankingMessage.style.display = 'block'; // 메시지 표시
+        } else {
+            alert("닉네임을 입력해주세요.");
+        }
+    });
+}
+
+// 점수 저장 함수
+function saveScore(nickname, score) {
+    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    scores.push({ nickname: nickname, score: score });
+    localStorage.setItem("scores", JSON.stringify(scores));
 }
 
 // 점수 계산 후 화면에 갱신하는 함수
@@ -209,7 +230,7 @@ function calculateScore(result) {
     }
 }
 
-// 5초 동안 결과를 출력하는 모달 창이 닫히면 게임을 재시작 하는 함수
+// 5초 동안 결과를 출력하는 모달 창이 닫히면 게임을 재시작 하는 함수 (라운드 종료)
 const timeRemain = document.getElementById("time-remain");
 
 let closeTimer = 0;
@@ -228,11 +249,11 @@ function restartGameAfterExitModal() {
     }, 1000);
 }
 
-// 5초 되기 전에 사용자가 수동으로 모달 창을 종료하는 경우
+// 5초 되기 전에 사용자가 수동으로 모달 창을 종료하는 경우 (라운드 종료)
 const modalCloseButton = document.getElementsByClassName("modal__content-close-button")[0];
 const modalLayer = document.getElementsByClassName("modal-layer")[0];
 
-modal.addEventListener('click', function (e) {
+modal.addEventListener('click', function(e) {
     if (e.target === modalLayer || e.target === modalCloseButton) {
         modal.classList.remove("show");
         restartGame();
@@ -267,7 +288,7 @@ function restartGame() {
 // 게임 중단 버튼 클릭
 const stopButton = document.getElementById("stop-button");
 
-stopButton.addEventListener("click", function () {
+stopButton.addEventListener("click", function() {
     // 게임 종료 문구 준비
     showGameResult();
 
@@ -276,9 +297,6 @@ stopButton.addEventListener("click", function () {
 
     // 게임 종료 (게임 설정 초기화)
     initGame();
-
-    // 모달 종료 시 게임 재시작
-    restartGameAfterExitModal();
 });
 
 // 게임에 필요한 설정 값 초기화 함수
@@ -297,7 +315,7 @@ function initGame() {
 const playerLifeItem = document.getElementById("player-life");
 const pcImage = document.getElementById("pc-image");
 
-window.onload = function () {
+window.onload = function() {
     timer = setInterval(changePcSelection, speed);
 
     playerLifeItem.innerText = playerLife;
