@@ -17,19 +17,19 @@ let timer = 0;
 let lastPcSelection = "";
 let pcSelection = "";
 
-// 컴퓨터의 가위, 바위, 보 선택을 변경하는 함수
 function changePcSelection() {
+    // 생성된 난수를 PC의 선택 값으로 설정
+    // 이전 값과 동일하지 않은 경우에만 PC가 선택하도록 구현
     while (true) {
         pcSelection = getRandom();
 
-        // 이전 선택과 동일하지 않은 값이 나올 때까지 반복
         if (pcSelection !== lastPcSelection) {
-            lastPcSelection = pcSelection;
+            lastPcSelection = pcSelection; // 다음 순서에 비교값으로 사용하기 위하여 저장
             break;
         }
     }
 
-    // 선택된 값에 따라 이미지와 alt 속성을 변경
+    // 화면 이미지 변경
     switch (pcSelection) {
         case 0:
             pcImage.src = "img/game-rps/scissors.png";
@@ -50,21 +50,23 @@ function changePcSelection() {
     }
 }
 
-// 0부터 2까지의 랜덤 숫자를 반환하는 함수
+// 난수 생성 함수
 function getRandom() {
-    return parseInt(Math.random() * 3);
+    return parseInt(Math.random() * 3); // (max - min) + min : max는 3, min은 0
 }
 
+// 사용자가 가위 바위 보 버튼 클릭 시 결과 출력 및 점수 추가
 const buttonWrapper = document.getElementsByClassName("game__button-wrapper")[0];
 const scissorsButton = document.getElementById("scissors-button");
 const rockButton = document.getElementById("rock-button");
 const papersButton = document.getElementById("paper-button");
 
-// 버튼 클릭 이벤트를 통해 사용자의 선택을 받아서 게임을 진행
+let closeTimerState = 0;
+
 buttonWrapper.addEventListener("click", function(e) {
     let playerSelection = "";
 
-    // 선택된 버튼에 따라 playerSelection 값을 설정
+    // 사용자가 선택한 버튼에 따라 사용자 선택 값 설정
     if (e.target === scissorsButton) {
         playerSelection = 0;
     } else if (e.target === rockButton) {
@@ -75,63 +77,62 @@ buttonWrapper.addEventListener("click", function(e) {
         return;
     }
 
-    // 게임 로직을 처리하는 함수 호출
     rockPaperSissors(playerSelection);
 });
 
-// 가위 바위 보 게임의 메인 로직을 처리하는 함수
+// 가위 바위 보 메인 계산 함수
 function rockPaperSissors(playerSelection) {
+    // 게임 카운트 +1
     count++;
 
-    // 컴퓨터의 선택을 멈추기 위해 타이머 중지
+    // Interval 정지
     clearInterval(timer);
 
-    // 게임의 승패 결과를 확인
+    // 대진 결과 판단 (사용자 패 : 0, 무 : 1, 사용자 승 : 2)
     let result = checkMatchResult(playerSelection, pcSelection);
 
-    // 결과를 화면에 표시
+    // 대진 결과 화면에 출력
     showMatchResult(result, playerSelection, pcSelection);
 
-    // 플레이어의 생명이 다하면 게임 종료, 그렇지 않으면 다음 라운드를 준비
+    // 기회가 없으면 게임 종료
     if (playerLife === 0) {
-        showGameResult();
-    } else {
-        restartGameAfterExitModal();
+        initGame();
     }
+
+    // 모달 종료 시 게임 재시작
+    restartGameAfterExitModal();
 }
 
-// 플레이어와 컴퓨터의 선택을 비교해 결과를 반환하는 함수
+// 대진 결과를 판단하는 함수 (가위 : 0, 바위 : 1, 보 : 2)
 function checkMatchResult(player, pc) {
     let result = player - pc;
 
-    if (result === 0) {
+    if (result === 0) {                              // 무승부인 경우
         drawCount++;
-        return 1; // 무승부
-    } else if (result === -2 || result === 1) {
+        return 1;
+    } else if (result === -2 || result === 1) {       // 사용자가 승리한 경우
         winCount++;
-        return 2; // 플레이어 승리
-    } else if (result === -1 || result === 2) {
+        return 2;
+    } else if (result === -1 || result === 2) {       // 사용자가 패배한 경우
         loseCount++;
-        return 0; // 플레이어 패배
+        return 0;
     }
 }
 
-const roundModal = document.getElementById("round-modal");
-const endModal = document.getElementById("end-modal");
-const rankModal = document.getElementById("rank-modal");
-
-const modalTitle = document.querySelector("#round-modal .modal__content-title");
-const endModalTitle = document.querySelector("#end-modal .modal__content-title");
-const rankModalTitle = document.getElementById("ranking-content");
+// 대진 결과를 화면에 출력하는 함수
+const modal = document.getElementsByClassName("modal")[0];
+const modalTitle = document.getElementsByClassName("modal__content-title")[0];
 
 const playerScoreItem = document.getElementById("score-player");
 const pcScoreItem = document.getElementById("score-pc");
 
 function showMatchResult(result, player, pc) {
+    // 화면에 점수 갱신
     if (result !== 1 || result !== null) {
         calculateScore(result);
     }
 
+    // 남은 기회 갱신 (이기면 +1, 지면 -1)
     if (result === 0) {
         playerLife -= 1;
     } else if (result === 2) {
@@ -139,6 +140,7 @@ function showMatchResult(result, player, pc) {
     }
     playerLifeItem.innerText = playerLife;
 
+    // 모달에 대진 결과 대입
     if (playerLife > 0) {
         showRoundResult(result, player, pc);
     } else {
@@ -146,14 +148,13 @@ function showMatchResult(result, player, pc) {
     }
 }
 
-// 라운드 종료 후 결과를 화면에 표시하는 함수
+// 한 라운드 종료 시 출력 문구
 function showRoundResult(result, player, pc) {
     let colorList = ["color-red", "color-green", "color-blue"];
-    let heartList = ["./img/common/broken-heart.png", "", "./img/common/heart.png"];
+    let heartList = ["./img/common/broken-heart.png", "", "./img/common/heart.png"]
     let resultList = ["패배", "무승부", "승리"];
     let rpsList = ["✌", "✊", "✋"];
 
-    // 결과를 반영한 HTML 코드 설정
     modalTitle.innerHTML = `
         <h1 class="modal__content-title--result ${colorList[result]}">
             ${resultList[result]}!<br />
@@ -167,17 +168,18 @@ function showRoundResult(result, player, pc) {
         </p>
     `;
 
-    // 승패 결과에 따라 애니메이션 적용
     const resultLifeItem = document.getElementsByClassName("modal__content-title--result-life")[0];
+
     resultLifeItem.style.animation = "blinkingEffect 400ms 6 alternate";
 
-    // 모달을 화면에 표시
-    roundModal.style.display = "block";
+    modal.classList.add("show");
 }
 
-// 게임 종료 시 결과를 표시하고 게임 종료 모달을 보여주는 함수
+// 게임 종료 시 출력 문구
 function showGameResult() {
-    endModalTitle.innerHTML = `
+    time = 10;
+
+    modalTitle.innerHTML = `
     <h1 class="modal__content-title--result color-red">
         게임 종료!
     </h1>
@@ -191,83 +193,12 @@ function showGameResult() {
         <span class="color-green">${drawCount}번</span>의 무승부가<br />
         있었습니다.
     </p>
-    <p id="ranking-message" class="color-blue" style="display:none; margin-top: 10px;">랭킹이 등록 되었습니다.</p>
     `;
 
-    endModal.style.display = "block";
+    modal.classList.add("show");
 }
 
-// 점수 저장 버튼 클릭 시 동작하는 함수
-document.getElementById("save-score").addEventListener("click", function() {
-    const nicknameInput = document.getElementById("nickname");
-    const nickname = nicknameInput.value;
-    const rankingMessage = document.getElementById("ranking-message");
-
-    // 닉네임이 입력된 경우에만 점수를 저장하고 메시지를 표시
-    if (nickname) {
-        saveScore(nickname, playerScore);
-        rankingMessage.style.display = 'block'; // 메시지 표시
-        nicknameInput.value = ""; // 닉네임 입력 칸 비우기
-    } else {
-        alert("닉네임을 입력해주세요.");
-    }
-});
-
-// 랭킹 버튼 클릭 시 동작하는 함수
-document.getElementById("rank-button").addEventListener("click", function() {
-    showRankingModal();
-});
-
-// 랭킹 모달을 표시하고 상위 10개의 랭킹을 보여주는 함수
-function showRankingModal() {
-    const scores = JSON.parse(localStorage.getItem("scores")) || [];
-
-    // 점수를 기준으로 내림차순 정렬
-    scores.sort((a, b) => b.score - a.score);
-
-    const topScores = scores.slice(0, 10); // 상위 10개만 선택
-
-    // 랭킹 목록을 생성
-    let rankingHtml = '<h1 class="modal__content-title--result color-blue">랭킹 상위 10</h1>';
-    rankingHtml += '<ul>';
-
-    topScores.forEach((entry, index) => {
-        rankingHtml += `<li>${index + 1}. ${entry.nickname} - ${entry.score}점</li>`;
-    });
-
-    rankingHtml += '</ul>';
-
-    // 생성된 HTML을 모달에 삽입하고 모달을 표시
-    rankModalTitle.innerHTML = rankingHtml;
-    rankModal.style.display = "block";
-}
-
-// 랭킹 모달 닫기 버튼 클릭 시 동작하는 함수
-document.getElementById("close-ranking").addEventListener("click", function() {
-    rankModal.style.display = "none";
-});
-
-// 모달 바깥을 클릭해도 모달이 닫히도록 처리
-window.addEventListener("click", function(event) {
-    if (event.target === roundModal) {
-        roundModal.style.display = "none";
-        restartGame();
-    } else if (event.target === endModal) {
-        endModal.style.display = "none";
-        restartGame();
-    } else if (event.target === rankModal) {
-        rankModal.style.display = "none";
-    }
-});
-
-// 로컬 스토리지에 점수를 저장하는 함수
-function saveScore(nickname, score) {
-    let scores = JSON.parse(localStorage.getItem("scores")) || [];
-    scores.push({ nickname: nickname, score: score });
-    localStorage.setItem("scores", JSON.stringify(scores));
-}
-
-// 게임 결과에 따라 점수를 계산하고 업데이트하는 함수
+// 점수 계산 후 화면에 갱신하는 함수
 function calculateScore(result) {
     if (result === 2) {
         playerScore += 10;
@@ -278,12 +209,12 @@ function calculateScore(result) {
     }
 }
 
+// 5초 동안 결과를 출력하는 모달 창이 닫히면 게임을 재시작 하는 함수
 const timeRemain = document.getElementById("time-remain");
 
 let closeTimer = 0;
 let time = 5;
 
-// 라운드 종료 후 자동으로 게임을 재시작하는 함수
 function restartGameAfterExitModal() {
     timeRemain.innerText = time;
 
@@ -291,56 +222,66 @@ function restartGameAfterExitModal() {
         timeRemain.innerText = --time;
 
         if (time === 0) {
-            roundModal.style.display = "none";
+            modal.classList.remove("show");
             restartGame();
         }
     }, 1000);
 }
 
-// 모달 닫기 버튼 클릭 시 동작하는 함수 (게임 종료 시 재시작 처리)
-const modalCloseButtons = document.querySelectorAll(".modal__content-close-button");
+// 5초 되기 전에 사용자가 수동으로 모달 창을 종료하는 경우
+const modalCloseButton = document.getElementsByClassName("modal__content-close-button")[0];
+const modalLayer = document.getElementsByClassName("modal-layer")[0];
 
-modalCloseButtons.forEach(button => {
-    button.addEventListener("click", function() {
-        if (button.id !== "save-score" && button.id !== "close-ranking") { // save-score와 close-ranking 버튼 클릭 시 게임이 재시작되지 않도록 예외 처리
-            roundModal.style.display = "none";
-            endModal.style.display = "none";
-            restartGame();
-        }
-    });
+modal.addEventListener('click', function(e) {
+    if (e.target === modalLayer || e.target === modalCloseButton) {
+        modal.classList.remove("show");
+        restartGame();
+    }
 });
 
-// 게임을 재시작하는 함수 (점점 빠르게)
+// 게임을 재시작 하는 함수
 function restartGame() {
+    // 결과 모달 출력 타이머 종료
     clearInterval(closeTimer);
 
+    // 결과 모달 time 초기화
     time = 5;
 
+    // 컴퓨터의 마지막 선택 값 재설정
     changePcSelection();
 
+    // 화면 초기화
     playerLifeItem.innerText = playerLife;
     playerScoreItem.innerText = playerScore;
     pcScoreItem.innerText = pcScore;
 
+    // 게임 회차에 따라 스피드 빠르게 조절 (20회차 이상 부턴 속도 고정)
     if (count <= 20) {
-        speed -= 10;
+        speed = speed - 10;
     }
 
+    // 게임 재시작
     timer = setInterval(changePcSelection, speed);
 }
 
-// 게임 종료 버튼 클릭 시 동작하는 함수
+// 게임 중단 버튼 클릭
 const stopButton = document.getElementById("stop-button");
 
 stopButton.addEventListener("click", function() {
+    // 게임 종료 문구 준비
     showGameResult();
 
+    // Interval 정지
     clearInterval(timer);
 
+    // 게임 종료 (게임 설정 초기화)
     initGame();
+
+    // 모달 종료 시 게임 재시작
+    restartGameAfterExitModal();
 });
 
-// 게임 설정을 초기화하는 함수
+// 게임에 필요한 설정 값 초기화 함수
 function initGame() {
     speed = 300;
     playerLife = 3;
@@ -352,14 +293,14 @@ function initGame() {
     loseCount = 0;
 }
 
+// 기본 값 세팅 및 가위바위보 게임 자동 시작
 const playerLifeItem = document.getElementById("player-life");
 const pcImage = document.getElementById("pc-image");
 
-// 페이지 로드 시 초기 설정 및 타이머 시작
 window.onload = function() {
     timer = setInterval(changePcSelection, speed);
 
     playerLifeItem.innerText = playerLife;
     playerScoreItem.innerText = playerScore;
     pcScoreItem.innerText = pcScore;
-};
+}
