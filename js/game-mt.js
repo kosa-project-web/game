@@ -42,21 +42,21 @@ function initGame() {
 
 // 게임 화면 초기화
 function initScreen() {
-    changeClickFlag(false);
+    changeClickFlag(false); //클릭 가능 여부 매개변수로 전달
 
-    turnText.innerHTML = turn;
-    pointText.innerHTML = point;
+    turnText.innerHTML = turn; //현재 턴 표시
+    pointText.innerHTML = point; //현재 점수 표시
 }
 
 // 게임 턴 변경 후 화면 갱신
 function changeTurn(changeValue) {
-    turn = changeValue;
-    turnText.innerHTML = turn;
+    turn = changeValue; //true(클릭가능)
+    turnText.innerHTML = turn; //현재 턴 표시
 
     if (turn === "YOU") {
         turnText.classList.remove("blink");
-        void turnText.offsetWidth;
-        turnText.classList.add("blink");
+        void turnText.offsetWidth; // 레이아웃 강제 업데이트
+        turnText.classList.add("blink"); //애니메이션 효과 재시작
     }
 
     // 눌려있는 버튼이 있다면 하얀색 배경으로 변경
@@ -75,20 +75,23 @@ function addPoint(addValue) {
 
 // 클릭 여부 변경
 function changeClickFlag(flagValue) {
-    let cursorStyle = "pointer";
+    let cursorStyle = "pointer"; //클릭 가능
 
     isClick = flagValue;
 
+    //클릭 불가능
     if (isClick === false) {
         cursorStyle = "auto";
     }
 
+    //각 item 요소의 커서 스타일 변경
     for (let i = 0; i < items.length; i++) {
         items[i].style.cursor = cursorStyle;
     }
 }
 
 // 정답 만들기
+//무작위로 생성된 숫자를 answerArr 배열에 추가
 function createAnswer() {
     for (let i = 0; i < answerCount; i++) {
         answerArr.push(getRandom(9, 0));
@@ -100,20 +103,23 @@ const items = document.getElementsByClassName("item");
 
         function selectAnswerOnPC() {
             let cnt = 0;
-
+            //비동기 작업이 완료될 때까지 대기
             let selectAnswerPromise = new Promise((resolve, reject) => {
+                //타이머: 애니메이션 0.8초마다 실행
                 let selectAnswerTimer = setInterval(() => {
-            // 배경색이 변하는 애니메이션 재시작을 위해 이미 bgChange 클래스가 부착되어 있다면 제거
+            // bgChange 클래스가 부착되어 있다면 제거
             if (items[answerArr[cnt]].classList.contains("bgChange")) {
                 items[answerArr[cnt]].classList.remove("bgChange");
+                //브라우저가 클래스 제거한 것 인식하도록 함
                 void items[answerArr[cnt]].offsetWidth;
             }
-
+            // bgChange 클래스 다시 추가하여 애니메이션 트리거
             items[answerArr[cnt++]].classList.add("bgChange");
 
+            //모든 요소에 애니메이션 적용되면 타이머 중지
             if (cnt === answerCount) {
                 clearInterval(selectAnswerTimer);
-
+                //Promise 해결
                 resolve();
             }
         }, 800);
@@ -121,6 +127,7 @@ const items = document.getElementsByClassName("item");
 
     selectAnswerPromise.then(() => {
         // selectAnswerPromise 성공인 경우 실행할 코드
+        //0.8초 후 waitGameStart 함수 실행
         setTimeout(waitGameStart, 800);
     });
 }
@@ -134,7 +141,9 @@ function waitGameStart() {
         }
     }
 
+    //클릭 가능 상태로 변경
     changeClickFlag(true);
+    //사용자 차례로 변경
     changeTurn("YOU");
 }
 
@@ -152,15 +161,17 @@ itemWrapper.addEventListener("click", function(e) {
         return;
     }
 
+    //data-id 속성 값(사용자가 클릭한 요소)을 정수로 반환
     let targetId = parseInt(e.target.dataset.id);
 
     checkCorrectAnswer(targetId);
 });
 
 function checkCorrectAnswer(targetId) {
-    // 사용자가 선택한 블록의 id와 정답이 일치하면 맞은 것으로 판단
+    // answerArr의 배열의 해당 요소와 targetid의 요소가 같은지 차례로 비교
+    // 일치하면 배열 인덱스 1씩 증가
     if (targetId === answerArr[playerSelectionCount++]) {
-        // 사용자의 선택 횟수가 정답 개수(PC의 선택값 개수)와 같아지면 전부 맞은 것으로 판단
+        // 배열 인덱스가 증가하다 총 개수와 일치하면 clearStage 함수 호출
         if (playerSelectionCount === answerCount) {
             clearStage();
         }
@@ -182,6 +193,7 @@ function clearStage() {
     // 클릭 이벤트가 발생하지 않도록 설정 및 커서 스타일 변경
     changeClickFlag(false);
 
+    //클리어 UI
     stageClearImg.classList.add("show");
 
     // 2초 후 다음 스테이지 시작
@@ -193,34 +205,12 @@ function clearStage() {
     }, 2000);
 }
 
-const modal = document.getElementsByClassName("modal")[0];
+
 const modalTitle = document.querySelector(".modal__content-title");
 const nicknameInput = document.getElementById("nickname");
 const resultModal = document.getElementById("result-modal");
-const rankingModal = document.getElementById("ranking-modal");
-const modalRanking = document.querySelector(".modal__ranking");
-const closeRankingButton = document.getElementById("close-ranking-button");
-
 // 게임 종료 시 출력 문구
 function showGameResult() {
-
-    let resultText = "";
-
-   /* if (point <= 20) {
-        resultText = "한 눈 팔면 안돼요!";
-    } else if (point > 20 && point <= 40) {
-        resultText = "집중력을 좀 더 높여볼까요?<br/>ฅʕ•ㅅ•ʔฅ<br/><br/>곰돌이가 당신을 응원합니다.";
-    } else if (point > 40 && point <= 60) {
-        resultText = "눈을 크게 뜨고 다시 해봅시다!<br/>Ꮚ•̀ꈊ•́Ꮚ<br/><br/>귀여운 양이 당신을 응원합니다.";
-    } else if (point > 60 && point <= 80) {
-        resultText = "조금만 더 힘내요!<br/>^   ^<br/>(◕ㅅ◕｡)<br/><br/>냥냥이가 당신을 응원합니다.";
-    } else if (point > 80 && point <= 120) {
-        resultText = "더 할 수 있어요!<br/>૮ฅ・ﻌ・აฅ<br/><br/>댕댕이가 당신을 응원합니다.";
-    } else if (point > 120 && point <= 170) {
-        resultText = "ㄴ(°0°)ㄱ<br/>상상도 못한 정체<br/><br/>엄청난 기억력을<br/>가지셨네요!";
-    } else if (point > 170) {
-        resultText = "(๑°ㅁ°๑)ﾉ<br/>어쩌면 당신의 지능,<br/>컴퓨터보다 좋을지도..";
-    }*/
 
     modalTitle.innerHTML = `
     <h1 class="modal__content-title--result color-red">
@@ -229,30 +219,20 @@ function showGameResult() {
     <span class="modal__content-title--stage">
         당신의 IQ : <strong>${point}</strong>
     </span>
-    <p class="modal__content-title--desc">
-        ${resultText}
-    </p>
     `;
-
-
-    // 기존 닫기 버튼 대신 닉네임 입력 폼을 보여줌
+    // 닉네임 입력 폼
     nicknameInput.value = "";
+    //게임 종료 창 띄워줌
     resultModal.classList.add("show");
-
-    // modal.classList.add("show");
 
 }
 
+const rankingModal = document.getElementById("ranking-modal");
 // 엔터 키를 눌렀을 때 점수 저장 및 랭킹 표시
 nicknameInput.addEventListener("keyup", function(event) {
     if (event.key === "Enter") {
-        event.preventDefault();
-        const nickname = nicknameInput.value.trim();
-
-        // if (nickname === "") {
-        //     alert("Please enter your nickname.");
-        //     return;
-        // }
+        event.preventDefault(); //기본동작 방지
+        const nickname = nicknameInput.value.trim(); //닉네임 추출 및 공백 제거
 
         // 점수 저장
         saveScore(nickname, point);
@@ -262,14 +242,6 @@ nicknameInput.addEventListener("keyup", function(event) {
         // 랭킹 표시
         showRanking();
         rankingModal.classList.add("show");
-
-        /*// 모달 창 닫기 (랭킹 보여준 후 3초 뒤에 게임 재시작)
-        setTimeout(() => {
-            modal.classList.remove("show");
-            restartGame();
-        }, 3000);*/
-
-        //재시작 버튼
     }
 });
 
@@ -289,33 +261,27 @@ function saveScore(nickname, score) {
     localStorage.setItem("scores", JSON.stringify(scores));
 }
 
+const modalRanking = document.querySelector(".modal__ranking");
 // 랭킹 표시 함수
 function showRanking() {
     const scores = JSON.parse(localStorage.getItem("scores")) || [];
 
     modalRanking.innerHTML = `
-        <ol>
-            ${scores.map(score => `<li>${score.nickname}: ${score.score}</li>`).join('')}
-        </ol>
-    `;
+    <ol>
+        ${scores.map((score, index) =>
+        `<li>${index + 1}. ${score.nickname} 님의 IQ: ${score.score}</li><br>`
+    ).join('')}
+    </ol>
+        `;
 }
 
+const closeRankingButton = document.getElementById("close-ranking-button");
 // 랭킹 모달 닫기 버튼 클릭 시 게임 재시작
 closeRankingButton.addEventListener("click", function() {
     rankingModal.classList.remove("show");
     restartGame();
 });
 
-/*// 모달창 닫으면 게임 재시작
-const modalTitle = document.getElementsByClassName("modal__content-title")[0];
-const modalCloseButton = document.getElementsByClassName("modal__content-close-button")[0];
-
-modal.addEventListener('click', function(e) {
-    if (e.target === modal || e.target === modalCloseButton) {
-        modal.classList.remove("show");
-        restartGame();
-    }
-});*/
 
 // isClick이 ture인 경우에만 CSS hover와 비슷한 효과를 주기 위해 JS로 구현
 // 아이템 요소에 마우스 over 시
@@ -348,4 +314,9 @@ window.onload = function() {
     pointText.innerHTML = point;
 
     startGame();
+}
+
+//callStorageClear();
+function callStorageClear(){
+    localStorage.clear();
 }
