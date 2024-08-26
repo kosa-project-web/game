@@ -40,14 +40,22 @@
         <div class="stage-clear"></div>
     </div>
 
-    <div class="modal modal-layer">
+    <div class="modal modal-layer" id="end-modal">
         <div class="modal__content">
             <div class="modal__content-title">
             </div>
+            <p id="ranking-message" class="color-blue" style="display:none; margin-top: 10px;">랭킹이 등록 되었습니다.</p><br>
+            <input type="text" id="nickname" name="nickname" class="white-input" placeholder="닉네임을 입력 해주세요." required>
+            <button id="save-score" class="white-button modal__content-close-button" type="button">점수 저장</button>
+            <button id="rank-button" class="white-button modal__content-close-button" type="button">랭킹 확인</button>
+            <button class="white-button modal__content-close-button" type="button">닫기</button>
+        </div>
+    </div>
 
-            <button class="white-button modal__content-close-button" type="button">
-                닫기
-            </button>
+    <div class="modal modal-layer" id="rank-modal">
+        <div class="modal__content">
+            <div class="modal__content-title" id="ranking-content"></div>
+            <button class="white-button modal__content-close-button" id="close-ranking" type="button">닫기</button>
         </div>
     </div>
 </div>
