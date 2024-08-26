@@ -167,6 +167,7 @@ itemWrapper.addEventListener("click", function(e) {
     checkCorrectAnswer(targetId);
 });
 
+//사용자 정답 체크 
 function checkCorrectAnswer(targetId) {
     // answerArr의 배열의 해당 요소와 targetid의 요소가 같은지 차례로 비교
     // 일치하면 배열 인덱스 1씩 증가
