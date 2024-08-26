@@ -12,40 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/common/styles.css">
     <link rel="stylesheet" href="./css/game-rps.css">
-    <style>
-        .white-button {
-            width: 100%;
-            padding: 10px 0;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .white-button:hover {
-            background-color: #f0f0f0;
-        }
-        .modal__content {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .modal__content input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .modal__content .color-blue {
-            color: #007bff;
-        }
-    </style>
 </head>
 <body>
 <div id="container" class="no-drag">
@@ -105,8 +71,7 @@
     <!-- 라운드 결과 모달 창 -->
     <div class="modal modal-layer" id="round-modal">
         <div class="modal__content">
-            <div class="modal__content-title">
-            </div>
+            <div class="modal__content-title"></div>
 
             <p class="modal__content-guide">
                 <span id="time-remain"></span>초 뒤 자동으로 닫힙니다.
@@ -119,10 +84,9 @@
     </div>
 
     <!-- 게임 종료 모달 창 -->
-    <div class="modal modal-layer" id="end-modal" style="display: none;">
+    <div class="modal modal-layer" id="end-modal">
         <div class="modal__content">
-            <div class="modal__content-title">
-            </div>
+            <div class="modal__content-title"></div>
 
             <input type="text" id="nickname" name="nickname" placeholder="닉네임을 입력 해주세요." required>
             <button id="save-score" class="white-button modal__content-close-button" type="button">점수 저장</button>
@@ -130,6 +94,15 @@
             <button class="white-button modal__content-close-button" type="button">닫기</button>
         </div>
     </div>
+
+    <!-- 랭킹 모달 창 -->
+    <div class="modal modal-layer" id="rank-modal">
+        <div class="modal__content">
+            <div class="modal__content-title" id="ranking-content"></div>
+            <button class="white-button modal__content-close-button" id="close-ranking" type="button">닫기</button>
+        </div>
+    </div>
+
 </div>
 
 <script src="./js/game-rps.js"></script>
