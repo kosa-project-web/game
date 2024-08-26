@@ -41,16 +41,15 @@
                         PC : <strong id="score-pc"></strong>
                     </p>
                     <span>
-                        VS
-                    </span>
+                            VS
+                        </span>
                     <p class="game__score-item player">
                         Player : <strong id="score-player"></strong>
                     </p>
                 </div>
 
                 <div class="game__pc-selection">
-                    <img src="./img/game-rps/scissors.png" alt="컴퓨터 선택: 가위" class="game__pc-selection--image"
-                         id="pc-image"/>
+                    <img src="./img/game-rps/scissors.png" alt="컴퓨터 선택: 가위" class="game__pc-selection--image" id="pc-image" />
                 </div>
 
                 <div class="game__button-wrapper">
@@ -68,10 +67,10 @@
         </main>
     </div>
 
-    <!-- 라운드 결과 모달 창 -->
-    <div class="modal modal-layer" id="round-modal">
+    <div class="modal modal-layer">
         <div class="modal__content">
-            <div class="modal__content-title"></div>
+            <div class="modal__content-title">
+            </div>
 
             <p class="modal__content-guide">
                 <span id="time-remain"></span>초 뒤 자동으로 닫힙니다.
@@ -82,27 +81,6 @@
             </button>
         </div>
     </div>
-
-    <!-- 게임 종료 모달 창 -->
-    <div class="modal modal-layer" id="end-modal">
-        <div class="modal__content">
-            <div class="modal__content-title"></div>
-
-            <input type="text" id="nickname" name="nickname" placeholder="닉네임을 입력 해주세요." required>
-            <button id="save-score" class="white-button modal__content-close-button" type="button">점수 저장</button>
-            <button id="rank-button" class="white-button modal__content-close-button" type="button">랭킹</button>
-            <button class="white-button modal__content-close-button" type="button">닫기</button>
-        </div>
-    </div>
-
-    <!-- 랭킹 모달 창 -->
-    <div class="modal modal-layer" id="rank-modal">
-        <div class="modal__content">
-            <div class="modal__content-title" id="ranking-content"></div>
-            <button class="white-button modal__content-close-button" id="close-ranking" type="button">닫기</button>
-        </div>
-    </div>
-
 </div>
 
 <script src="./js/game-rps.js"></script>
