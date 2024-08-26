@@ -186,7 +186,9 @@
     width: 20%;
     height: 60%;
     max-height: 30px;
-    padding: 5px;
+    padding: 10px;
+
+    background-color: whitesmoke;
 }
 
 .modal {
@@ -264,6 +266,27 @@
 
 .info-modal .modal__content-desc--list li::before {
     content: '🤍';
+}
+/*김남영 점수창 관련 설정값 추가 info-modal을 베이스로 하되 일부 변경할거*/
+
+.info-modal .modal__content-desc--list-myscore {
+    padding-left: 20px;
+    text-align: left;
+}
+
+.info-modal .modal__content-desc--list-myscore li{
+    margin-bottom: 10px;
+    text-indent: -20px;
+}
+.info-modal .modal__content-desc--list-myscore li::before{
+
+}
+.info-modal .modal__content-desc--list-myrank li{
+    margin-bottom: 10px;
+    text-indent: -20px;
+}
+.info-modal .modal__content-desc--list-myrank li::before{
+
 }
 
 .modal__content-title--alert {
