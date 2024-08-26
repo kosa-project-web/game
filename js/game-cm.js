@@ -9,7 +9,7 @@ const CARD_IMG = [
 const BOARD_SIZE = 24;
 
 let stage = 1;
-let time = 1;
+let time = 60;
 let timer = 0;
 let isFlip = false;
 
