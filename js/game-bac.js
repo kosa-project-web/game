@@ -376,26 +376,46 @@ function showGameResult(isWin) {
     }
 }
 
+//결과창 랭킹창
+const resultmodal = document.getElementById("result-modal");
+const rankingmodal = document.getElementById("ranking-modal");
 
-
+//esc로 변경
 // 엔터키 클릭으로 모달창 닫기
 document.addEventListener("keydown", function(e) {
     if (infoModal.classList.contains("show")) {
-        if (e.code === "Enter") {
+        if (e.code === "Escape") {
             infoModal.classList.remove("show");
         }
     }
 
     if (alertModal.classList.contains("show")) {
-        if (e.code === "Enter" && isShowAlertModal === true) {
+        if (e.code === "Escape" && isShowAlertModal === true) {
             alertModal.classList.remove("show");
         }
     }
 
     //커스텀 KNY
     if(modal.classList.contains("show")){
-        if (e.code === "Enter") {
+        if (e.code === "Escape") {
             modal.classList.remove("show");
+        }
+    }
+
+    //결과창에서 입력
+    if(resultmodal.classList.contains("show")){
+        if (e.code === "Escape") {
+            resultmodal.classList.remove("show");
+        }
+        if (e.code === "Enter") {
+            saveScore();
+        }
+    }
+
+    //랭킹 창에서 입력
+    if(rankingmodal.classList.contains("show")){
+        if (e.code === "Escape") {
+            rankingmodal.classList.remove("show");
         }
     }
 });
@@ -439,28 +459,32 @@ function saveScore() {
         return;
     }
 
-    let scores = JSON.parse(localStorage.getItem('scores')) || [];
-    scores.push({ name: playerName, score: parseInt(score) });
-    scores.sort((a, b) => b.score - a.score);
+    let scores_baseball = JSON.parse(localStorage.getItem('scores_baseball')) || [];
+    scores_baseball.push({ name: playerName, score: parseInt(score) });
+    scores_baseball.sort((a, b) => b.score - a.score);
 
-    if (scores.length > 10) {
-        scores.length = 10; // 상위 10개만 저장
+    if (scores_baseball.length > 10) {
+        scores_baseball.length = 10; // 상위 10개만 저장
     }
 
-    localStorage.setItem('scores', JSON.stringify(scores));
+    localStorage.setItem('scores_baseball', JSON.stringify(scores_baseball));
 
     // 점수 모달 창 닫기
-    document.getElementById('result-modal').classList.remove('show');
+    resultmodal.classList.remove('show');
 
     // 랭킹 모달 창 표시
     showRankings();
 }
 
 function showRankings() {
-    let scores = JSON.parse(localStorage.getItem('scores')) || [];
+    let scores_baseball = JSON.parse(localStorage.getItem('scores_baseball')) || [];
     let modalContent = '<ul>';
-    scores.forEach((entry, index) => {
-        modalContent += `<li>${index + 1}. ${entry.name} - ${entry.score}점</li>`;
+    scores_baseball.forEach((entry, index) => {
+        if(index===0){
+            modalContent += `<li>🌟${index + 1}. ${entry.name} - ${entry.score}점</li>`;
+
+        }
+        modalContent += `<li>${"  "}${index + 1}. ${entry.name} - ${entry.score}점</li>`;
     });
     modalContent += '</ul>';
     document.getElementById('ranking-list').innerHTML = modalContent;
