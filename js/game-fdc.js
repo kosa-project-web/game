@@ -194,16 +194,7 @@ function showGameResult() {
 // 모달 창 닫기
 modal.addEventListener('click', function (e) {
     if (e.target === modal || e.target === modalCloseButton) {
-        modal.classList.remove("show");
-        initialsInputDiv.style.display = 'none';
-        showRankingInputBtn.style.display = 'none';
-
-        // 게임 재시작
-        palette.innerHTML = '';
-        playerTime.innerHTML = time;
-        playerStage.innerHTML = stage;
-        initGame(); // 게임 초기화
-        startGame();
+        location.reload(); // 페이지 새로고침
     }
 });
 
@@ -218,15 +209,7 @@ submitInitialsBtn.addEventListener('click', function () {
     let initials = document.getElementById('initials').value.toUpperCase();
     if (initials.length === 3) {
         saveRanking(initials, stage); // 게임 종료 시의 stage 값 사용
-        modal.classList.remove("show");
-        initialsInputDiv.style.display = 'none';
-
-        // 게임 재시작
-        palette.innerHTML = '';
-        playerTime.innerHTML = time;
-        playerStage.innerHTML = stage;
-        initGame();
-        startGame();
+        location.reload(); // 페이지 새로고침
     } else {
         alert("3글자의 이니셜을 입력해주세요!");
     }
