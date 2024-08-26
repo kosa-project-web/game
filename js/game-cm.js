@@ -328,9 +328,9 @@ document.querySelectorAll(".modal__content-close-button").forEach(button => {
 
 // 랭킹 모달 창 표시 함수
 function showRankingModal() {
-    const scores = JSON.parse(localStorage.getItem("scores")) || [];
+    const scores = JSON.parse(localStorage.getItem("cardMatchingGameScores")) || [];
 
-    scores.sort((a, b) => b.score - a.score); // 점수 내림차순 정렬
+    scores.sort((a, b) => b.score - a.score); // 스테이지 내림차순 정렬
 
     const topScores = scores.slice(0, 10); // 상위 10개만 선택
 
@@ -338,7 +338,7 @@ function showRankingModal() {
     rankingHtml += '<ul>';
 
     topScores.forEach((entry, index) => {
-        rankingHtml += `<li>${index + 1}. ${entry.nickname} - ${entry.score}점</li>`;
+        rankingHtml += `<li>${index + 1}. ${entry.nickname} - STAGE ${entry.score}</li>`;
     });
 
     rankingHtml += '</ul>';
@@ -350,9 +350,9 @@ function showRankingModal() {
 
 // 점수 저장 함수
 function saveScore(nickname, score) {
-    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    let scores = JSON.parse(localStorage.getItem("cardMatchingGameScores")) || [];
     scores.push({ nickname: nickname, score: score });
-    localStorage.setItem("scores", JSON.stringify(scores));
+    localStorage.setItem("cardMatchingGameScores", JSON.stringify(scores));
 }
 
 // 기본 값 세팅 및 게임 자동 시작
