@@ -133,7 +133,7 @@ function showMatchResult(result, player, pc) {
     }
 
     // 남은 기회 갱신 (이기면 +1, 지면 -1)
-    if (result === 0) {
+    if (result === 0 || result === 1) {
         playerLife -= 1;
     } else if (result === 2) {
         playerLife += 1;

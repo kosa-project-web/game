@@ -1,6 +1,6 @@
 "use strict";
 
-const BG_COLOR = "#DEA5A4";
+const BG_COLOR = "#5579ce";
 const COLOR_WHITE = "#FFF";
 
 let turn = "PC"; // 게임 차례
@@ -101,7 +101,7 @@ function createAnswer() {
 // PC가 정답 선택
 const items = document.getElementsByClassName("item");
 
-        function selectAnswerOnPC() {
+function selectAnswerOnPC() {
             let cnt = 0;
             //비동기 작업이 완료될 때까지 대기
             let selectAnswerPromise = new Promise((resolve, reject) => {

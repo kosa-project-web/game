@@ -144,7 +144,7 @@ img {
     }
 
     to {
-        background-color: #DEA5A4;
+        background-color: #5579ce;
     }
 }
 
@@ -162,7 +162,6 @@ img {
     from {
         top: 50%;
     }
-
     to {
         top: 45%;
     }

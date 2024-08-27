@@ -470,7 +470,7 @@ function saveScore() {
     localStorage.setItem('scores_baseball', JSON.stringify(scores_baseball));
 
     // 점수 모달 창 닫기
-    resultmodal.classList.remove('show');
+    resultmodal.classList.remove('show'); 
 
     // 랭킹 모달 창 표시
     showRankings();
@@ -484,7 +484,9 @@ function showRankings() {
             modalContent += `<li>🌟${index + 1}. ${entry.name} - ${entry.score}점</li>`;
 
         }
-        modalContent += `<li>${"  "}${index + 1}. ${entry.name} - ${entry.score}점</li>`;
+        else{
+            modalContent += `<li>${"  "}${index + 1}. ${entry.name} - ${entry.score}점</li>`;
+        }
     });
     modalContent += '</ul>';
     document.getElementById('ranking-list').innerHTML = modalContent;
